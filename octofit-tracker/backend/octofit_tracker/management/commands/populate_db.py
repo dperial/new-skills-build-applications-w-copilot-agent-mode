@@ -13,28 +13,43 @@ class Command(BaseCommand):
         Workout.objects.all().delete()
 
         # Teams
-        marvel = Team.objects.create(name='Marvel')
-        dc = Team.objects.create(name='DC')
+        team_names = [f'Marvel{i}' for i in range(1, 11)] + [f'DC{i}' for i in range(1, 11)]
+        teams = [Team.objects.create(name=name) for name in team_names]
 
         # Users
-        ironman = User.objects.create(name='Iron Man', email='ironman@marvel.com', team='Marvel')
-        captain = User.objects.create(name='Captain America', email='cap@marvel.com', team='Marvel')
-        batman = User.objects.create(name='Batman', email='batman@dc.com', team='DC')
-        superman = User.objects.create(name='Superman', email='superman@dc.com', team='DC')
+        users = []
+        for i in range(1, 21):
+            team = 'Marvel'+str(i) if i <= 10 else 'DC'+str(i-10)
+            user = User.objects.create(
+                name=f'Hero{i}',
+                email=f'hero{i}@example.com',
+                team=team
+            )
+            users.append(user)
 
         # Activities
-        Activity.objects.create(user='Iron Man', type='Running', duration=30, date='2025-09-01')
-        Activity.objects.create(user='Captain America', type='Cycling', duration=45, date='2025-09-02')
-        Activity.objects.create(user='Batman', type='Swimming', duration=60, date='2025-09-03')
-        Activity.objects.create(user='Superman', type='Yoga', duration=20, date='2025-09-04')
+        activity_types = ['Running', 'Cycling', 'Swimming', 'Yoga', 'Boxing']
+        for i in range(1, 21):
+            Activity.objects.create(
+                user=users[i-1].name,
+                type=activity_types[i % len(activity_types)],
+                duration=20 + i,
+                date=f'2025-09-{(i%30)+1:02d}'
+            )
 
         # Leaderboard
-        Leaderboard.objects.create(team='Marvel', points=75)
-        Leaderboard.objects.create(team='DC', points=80)
+        for i, team in enumerate(teams):
+            Leaderboard.objects.create(
+                team=team.name,
+                points=50 + i*5
+            )
 
         # Workouts
-        Workout.objects.create(name='Pushups', description='Upper body strength', difficulty='Easy')
-        Workout.objects.create(name='Squats', description='Lower body strength', difficulty='Medium')
-        Workout.objects.create(name='Plank', description='Core strength', difficulty='Hard')
+        for i in range(1, 21):
+            Workout.objects.create(
+                name=f'Workout{i}',
+                description=f'Description for workout {i}',
+                difficulty=['Easy', 'Medium', 'Hard'][i % 3]
+            )
 
-        self.stdout.write(self.style.SUCCESS('octofit_db database populated with test data.'))
+        self.stdout.write(self.style.SUCCESS('octofit_db database populated with 20 test examples in chaque table.'))
