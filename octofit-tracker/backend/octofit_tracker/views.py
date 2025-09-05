@@ -1,3 +1,11 @@
+from django.http import HttpResponse
+
+def home_view(request):
+    """
+    Vue d'accueil pour la racine du site.
+    Affiche un message de bienvenue pour Octofit Tracker.
+    """
+    return HttpResponse("Bienvenue sur Octofit Tracker ! L’API fonctionne.")
 from rest_framework import viewsets
 from .models import User, Team, Activity, Leaderboard, Workout
 from .serializers import UserSerializer, TeamSerializer, ActivitySerializer, LeaderboardSerializer, WorkoutSerializer
